@@ -7,4 +7,4 @@ enlazan entre sí con `[[wikilinks]]`.
 
 ## Snowflake
 
-- [[Snowflake/modelo-de-administracion|Modelo de administración en Snowflake]]
+- [[Snowflake/fundamentos|Fundamentos de Snowflake]]

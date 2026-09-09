@@ -1,5 +1,5 @@
 ---
-title: Modelo de administración en Snowflake
+title: Fundamentos de Snowflake
 tags:
   - snowflake
   - data
