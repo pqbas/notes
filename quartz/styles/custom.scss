@@ -1,3 +1,26 @@
 @use "./variables.scss" as *;
 
 // put your custom CSS here!
+
+// Distribucion de espacios estilo Tailscale docs: tres columnas mas anchas,
+// con separacion real entre ellas y menos aire en la parte superior.
+.page {
+  max-width: min(94vw, 1700px);
+}
+
+@media all and (min-width: 1200px) {
+  .page > #quartz-body {
+    grid-template-columns: 300px minmax(0, 1fr) 260px;
+    column-gap: 2.5rem;
+  }
+}
+
+// $topSpacing se aplica en dos sitios distintos: el padding del sidebar y el
+// margin del page-header, por lo que ambos hay que bajarlos.
+.page > #quartz-body .sidebar {
+  padding-top: 2.5rem;
+}
+
+.page > #quartz-body .page-header {
+  margin-top: 2.5rem;
+}
