@@ -12,3 +12,4 @@ enlazan entre sí con `[[wikilinks]]`.
 ## Network
 
 - [[Network/descubrimiento-de-dispositivos|Descubrimiento de dispositivos por IP en una red local]]
+- [[Network/conectarse-a-una-red-wifi|Conectarse a una red WiFi desde la terminal en Linux]]
