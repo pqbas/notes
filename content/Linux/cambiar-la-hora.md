@@ -21,6 +21,16 @@ horaria mal puesta y un reloj que se fue de hora.
 timedatectl status
 ```
 
+```text
+               Local time: Wed 2026-09-16 16:18:06 -05
+           Universal time: Wed 2026-09-16 21:18:06 UTC
+                 RTC time: Wed 2026-09-16 21:18:06
+                Time zone: America/Lima (-05, -0500)
+System clock synchronized: yes
+              NTP service: active
+          RTC in local TZ: no
+```
+
 La salida describe lo siguiente:
 
 | Campo                       | Descripción                                      |
@@ -41,6 +51,10 @@ formato `Región/Ciudad`.
 
 ```bash
 timedatectl list-timezones | grep -i <ciudad>
+```
+
+```text
+America/Lima
 ```
 
 El cambio se aplica nombrando la zona, y requiere privilegios porque afecta a
@@ -67,13 +81,41 @@ se ve con el cliente de systemd.
 
 ```bash
 timedatectl show-timesync --all
+```
+
+```text
+LinkNTPServers=
+SystemNTPServers=
+RuntimeNTPServers=
+FallbackNTPServers=ntp.ubuntu.com
+ServerName=ntp.ubuntu.com
+ServerAddress=185.125.190.57
+RootDistanceMaxUSec=5s
+PollIntervalMinUSec=32s
+PollIntervalMaxUSec=34min 8s
+PollIntervalUSec=34min 8s
+NTPMessage={ Leap=0, Version=4, Mode=4, Stratum=2, ... Jitter=24.414ms }
+Frequency=-1332573
+```
+
+```bash
 systemctl status systemd-timesyncd
 ```
 
+```text
+● systemd-timesyncd.service - Network Time Synchronization
+     Loaded: loaded (/usr/lib/systemd/system/systemd-timesyncd.service; enabled)
+     Active: active (running) since Wed 2026-09-16 07:52:00 -05; 8h ago
+   Main PID: 1097 (systemd-timesyn)
+     Status: "Contacted time server 185.125.190.57:123 (ntp.ubuntu.com)."
+```
+
 Mientras NTP está activo el sistema rechaza cualquier intento de fijar la hora a
-mano, con el error
-`Failed to set time: Automatic time synchronization is enabled`, que es la causa
-habitual de que `set-time` no funcione.
+mano, que es la causa habitual de que `set-time` no funcione.
+
+```text
+Failed to set time: Automatic time synchronization is enabled
+```
 
 ## 4. Hora manual
 
