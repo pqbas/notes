@@ -6,15 +6,14 @@ tags:
 ---
 
 Los cuatro pasos siguientes identifican qué hosts están vivos en una LAN, por
-ejemplo `192.168.50.0/24`, usando solo herramientas que ya trae el sistema,
-por lo que sirven en una máquina donde no están instalados `nmap` ni
-`arp-scan`.
+ejemplo `192.168.50.0/24`, usando solo herramientas que ya trae el sistema, por
+lo que sirven en una máquina donde no están instalados `nmap` ni `arp-scan`.
 
 ## 1. Subred propia de la máquina
 
 La subred que hay que barrer se lee de la interfaz activa, donde la línea
-`inet x.x.x.x/24` de la interfaz en uso, por ejemplo `wlo1`, indica el rango
-al que pertenece la máquina.
+`inet x.x.x.x/24` de la interfaz en uso, por ejemplo `wlo1`, indica el rango al
+que pertenece la máquina.
 
 ```bash
 ip -4 addr show
@@ -29,17 +28,17 @@ recientemente, de modo que es una consulta pasiva que no genera tráfico.
 ip neigh show
 ```
 
-| Estado      | Qué significa                                     |
-| ----------- | ------------------------------------------------- |
-| `REACHABLE` | el host respondió y está confirmado como vivo     |
-| `STALE`     | se vio antes, sin reconfirmación reciente         |
-| `FAILED`    | no hubo respuesta                                 |
+| Estado      | Qué significa                                 |
+| ----------- | --------------------------------------------- |
+| `REACHABLE` | el host respondió y está confirmado como vivo |
+| `STALE`     | se vio antes, sin reconfirmación reciente     |
+| `FAILED`    | no hubo respuesta                             |
 
 ## 3. Barrido de la subred con ping
 
-El descubrimiento activo se hace lanzando un `ping` por cada dirección del
-rango en segundo plano, donde `-c1` envía un solo paquete y `-W1` corta la
-espera al segundo.
+El descubrimiento activo se hace lanzando un `ping` por cada dirección del rango
+en segundo plano, donde `-c1` envía un solo paquete y `-W1` corta la espera al
+segundo.
 
 ```bash
 # Barremos las 254 direcciones del rango en paralelo
@@ -49,15 +48,15 @@ done
 wait
 ```
 
-El prefijo del `ping` y el del `echo` deben ser el mismo, porque si difieren
-los hosts que responden se reportan bajo una subred que no es la suya.
+El prefijo del `ping` y el del `echo` deben ser el mismo, porque si difieren los
+hosts que responden se reportan bajo una subred que no es la suya.
 
-Mientras corre, la shell imprime `exit 1` por cada ping sin respuesta, que es
-el código normal de "sin respuesta" y no un error, dado que la mayoría de las
-254 direcciones no contesta.
+Mientras corre, la shell imprime `exit 1` por cada ping sin respuesta, que es el
+código normal de "sin respuesta" y no un error, dado que la mayoría de las 254
+direcciones no contesta.
 
-Al terminar conviene repetir `ip neigh show`, ya que el barrido deja en la
-tabla ARP la dirección MAC de cada host que respondió.
+Al terminar conviene repetir `ip neigh show`, ya que el barrido deja en la tabla
+ARP la dirección MAC de cada host que respondió.
 
 ## 4. Puerto SSH abierto en un host candidato
 
@@ -71,11 +70,11 @@ timeout 1.5 bash -c "cat < /dev/null > /dev/tcp/<ip>/22" 2>/dev/null && echo "SS
 
 Cada pieza del comando cumple una función dentro de la prueba.
 
-| Elemento                        | Qué aporta                                             |
-| ------------------------------- | ------------------------------------------------------ |
-| `cat < /dev/null > /dev/tcp/...`| abre la conexión sin enviar datos, solo para probarla  |
-| `timeout 1.5`                   | corta el intento para que un host mudo no cuelgue todo |
-| `2>/dev/null`                   | oculta el error de conexión rechazada                  |
+| Elemento                         | Qué aporta                                             |
+| -------------------------------- | ------------------------------------------------------ |
+| `cat < /dev/null > /dev/tcp/...` | abre la conexión sin enviar datos, solo para probarla  |
+| `timeout 1.5`                    | corta el intento para que un host mudo no cuelgue todo |
+| `2>/dev/null`                    | oculta el error de conexión rechazada                  |
 
 El banner confirma qué servicio está escuchando detrás del puerto.
 
@@ -98,10 +97,10 @@ done
 ## 5. Ejemplo de ejecución
 
 Sobre la subred `192.168.50.0/24`, desde el host `192.168.50.188` en `wlo1`, el
-barrido devolvió diez direcciones vivas, de las cuales solo `192.168.50.1`
-tenía el puerto 22 abierto, correspondiente a la interfaz de administración del
-router y no al equipo buscado.
+barrido devolvió diez direcciones vivas, de las cuales solo `192.168.50.1` tenía
+el puerto 22 abierto, correspondiente a la interfaz de administración del router
+y no al equipo buscado.
 
-El equipo esperado en `192.168.50.103` no respondió, por lo que estaba apagado
-o había cambiado de dirección, que es el caso donde la tabla de vecinos del
-paso 2 ayuda a reconocer la dirección anterior.
+El equipo esperado en `192.168.50.103` no respondió, por lo que estaba apagado o
+había cambiado de dirección, que es el caso donde la tabla de vecinos del paso 2
+ayuda a reconocer la dirección anterior.

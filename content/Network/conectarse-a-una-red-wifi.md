@@ -22,12 +22,12 @@ adaptador inalámbrico.
 nmcli device status
 ```
 
-| Estado          | Qué significa                                     |
-| --------------- | ------------------------------------------------- |
-| `connected`     | la interfaz ya está asociada a una red            |
-| `disconnected`  | la interfaz está lista pero sin red               |
-| `unavailable`   | la radio está apagada o falta el driver           |
-| `unmanaged`     | NetworkManager no controla esa interfaz           |
+| Estado         | Qué significa                           |
+| -------------- | --------------------------------------- |
+| `connected`    | la interfaz ya está asociada a una red  |
+| `disconnected` | la interfaz está lista pero sin red     |
+| `unavailable`  | la radio está apagada o falta el driver |
+| `unmanaged`    | NetworkManager no controla esa interfaz |
 
 Si la interfaz aparece como `unavailable`, la causa habitual es que la radio
 está bloqueada, y el bloqueo se consulta y se levanta con `rfkill`.
@@ -109,8 +109,8 @@ nmcli connection show
 ```
 
 Los perfiles se activan, se desactivan y se borran por nombre, donde borrar es
-lo que hace falta cuando la contraseña de la red cambió y el perfil viejo
-sigue intentando autenticarse con la anterior.
+lo que hace falta cuando la contraseña de la red cambió y el perfil viejo sigue
+intentando autenticarse con la anterior.
 
 ```bash
 nmcli connection up "<SSID>"
@@ -118,8 +118,8 @@ nmcli connection down "<SSID>"
 nmcli connection delete "<SSID>"
 ```
 
-La contraseña guardada de un perfil se puede recuperar, lo que sirve para
-leer la clave de una red a la que la máquina ya se conectó antes.
+La contraseña guardada de un perfil se puede recuperar, lo que sirve para leer
+la clave de una red a la que la máquina ya se conectó antes.
 
 ```bash
 nmcli --show-secrets connection show "<SSID>" | grep psk
@@ -127,9 +127,9 @@ nmcli --show-secrets connection show "<SSID>" | grep psk
 
 ## 6. Sin NetworkManager
 
-En un sistema mínimo, por ejemplo un servidor o un live USB, los tres pasos
-que NetworkManager agrupa hay que darlos por separado, empezando por levantar
-la interfaz.
+En un sistema mínimo, por ejemplo un servidor o un live USB, los tres pasos que
+NetworkManager agrupa hay que darlos por separado, empezando por levantar la
+interfaz.
 
 ```bash
 ip link set wlan0 up
@@ -144,11 +144,11 @@ wpa_passphrase "<SSID>" "<contraseña>" > /etc/wpa_supplicant/wifi.conf
 wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant/wifi.conf
 ```
 
-| Flag | Qué aporta                                    |
-| ---- | --------------------------------------------- |
-| `-B` | deja el proceso corriendo en segundo plano    |
-| `-i` | indica la interfaz sobre la que se autentica  |
-| `-c` | apunta al archivo con el SSID y la clave      |
+| Flag | Qué aporta                                   |
+| ---- | -------------------------------------------- |
+| `-B` | deja el proceso corriendo en segundo plano   |
+| `-i` | indica la interfaz sobre la que se autentica |
+| `-c` | apunta al archivo con el SSID y la clave     |
 
 La asociación no entrega dirección IP por sí sola, así que el último paso es
 pedirla al servidor DHCP de la red.
