@@ -4,6 +4,8 @@ draft: true
 tags:
   - matematicas
   - algebra-lineal
+created: 2026-09-08
+modified: 2026-09-08
 ---
 
 ### **Ejemplo 1:** Espacio vectorial $(\mathbb{R}^2, +, \mathbb{R}, ·)$

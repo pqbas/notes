@@ -4,6 +4,8 @@ draft: true
 tags:
   - matematicas
   - algebra-lineal
+created: 2026-09-08
+modified: 2026-09-08
 ---
 
 El conjunto de matrices $A \in \mathbb{R}^{n \times n}$ es un grupo respecto a la

@@ -9,15 +9,17 @@ En un sistema con systemd la hora se administra con `timedatectl`, que agrupa en
 un solo comando el reloj del sistema, la zona horaria, el reloj de hardware y la
 sincronización por NTP.
 
-Los pasos siguientes cubren el caso normal, que es corregir la zona horaria, y
-el caso de una máquina sin red, donde hay que poner la hora a mano.
+Una hora equivocada casi siempre viene de una de dos causas, una zona horaria
+mal puesta o un reloj que se fue de hora, y el arreglo es distinto en cada caso.
+Los pasos siguientes recorren esa ruta. Primero el diagnóstico que separa las
+dos causas, después la zona horaria y la sincronización automática, y al final
+los dos casos que se salen de lo normal, una máquina sin red y un reloj de
+hardware desfasado.
 
 ## 1. Estado actual del reloj
 
-El estado se consulta primero, porque distingue el problema real entre una zona
-horaria mal puesta y un reloj que se fue de hora.
-
 ```bash
+# Consultando el estado del reloj
 timedatectl status
 ```
 
@@ -31,8 +33,6 @@ System clock synchronized: yes
           RTC in local TZ: no
 ```
 
-La salida describe lo siguiente:
-
 | Campo                       | Descripción                                      |
 | --------------------------- | ------------------------------------------------ |
 | `Local time`                | La hora que ves, ya con la zona horaria aplicada |
@@ -40,16 +40,14 @@ La salida describe lo siguiente:
 | `RTC time`                  | El reloj de hardware                             |
 | `System clock synchronized` | Si NTP ya corrigió el reloj contra un servidor   |
 
-Si `Universal time` es correcta pero `Local time` no, el problema es la zona
-horaria y no el reloj, de modo que basta el paso 2 y no hace falta tocar la
-hora.
+> [!Warning] Si `Universal time` es correcta pero `Local time` no, el problema
+> es la zona horaria y no el reloj, de modo que basta el paso 2 y no hace falta
+> tocar la hora.
 
 ## 2. Zona horaria
 
-Las zonas disponibles se listan con el nombre que espera `timedatectl`, en
-formato `Región/Ciudad`.
-
 ```bash
+# Listando la zona horaria
 timedatectl list-timezones | grep -i <ciudad>
 ```
 
@@ -57,29 +55,25 @@ timedatectl list-timezones | grep -i <ciudad>
 America/Lima
 ```
 
-El cambio se aplica nombrando la zona, y requiere privilegios porque afecta a
-todo el sistema.
-
 ```bash
+# Cambiando la zona horaria
 sudo timedatectl set-timezone America/Lima
 ```
 
-Cambiar la zona no mueve el reloj del sistema, solo la forma de mostrarlo, ya
-que internamente Linux siempre guarda la hora en UTC.
+> [!Warning] Cambiar la zona no mueve el reloj del sistema, solo la forma de
+> mostrarlo, ya que internamente Linux siempre guarda la hora en UTC. Por eso,
+> si con la zona corregida la hora sigue mal, lo que falla es el reloj y el
+> arreglo es el paso siguiente.
 
 ## 3. Sincronización automática por NTP
 
-Lo habitual es no poner la hora a mano, sino dejar que el sistema la corrija
-contra un servidor de tiempo.
-
 ```bash
+# Habilitando el NTP (Network Time Protocol)
 sudo timedatectl set-ntp true
 ```
 
-El detalle de la sincronización, con el servidor en uso y la desviación medida,
-se ve con el cliente de systemd.
-
 ```bash
+# Mostrando el detalle de la sincronizacion con el servidor
 timedatectl show-timesync --all
 ```
 
@@ -99,6 +93,7 @@ Frequency=-1332573
 ```
 
 ```bash
+# Revisando el estado del servicio de sincronizacion
 systemctl status systemd-timesyncd
 ```
 
@@ -138,8 +133,12 @@ Terminado el ajuste conviene volver a habilitar NTP, porque el reloj de una
 máquina se desvía por su cuenta con el paso de los días.
 
 ```bash
+# Volviendo a habilitar el NTP
 sudo timedatectl set-ntp true
 ```
+
+Con la hora del sistema ya corregida queda un reloj más por revisar, el único
+que sigue contando con la máquina apagada.
 
 ## 5. Reloj de hardware
 
@@ -148,7 +147,7 @@ y se escribe desde el reloj del sistema.
 
 Con NTP activo casi nunca hace falta tocarlo, porque `systemd-timesyncd` baja la
 hora del sistema al RTC por su cuenta cada once minutos. El ajuste manual queda
-para estos casos:
+para estos cuatro casos.
 
 - En una máquina sin red el RTC es la única fuente de hora al arrancar, de modo
   que después de corregir la hora a mano hay que escribirla en el hardware.
@@ -160,6 +159,7 @@ para estos casos:
   al apagarse y la recuperan con NTP o con `fake-hwclock`.
 
 ```bash
+# Escribiendo la hora del sistema en el reloj de hardware
 sudo hwclock --systohc
 ```
 
@@ -167,6 +167,7 @@ La operación inversa, útil cuando el sistema arrancó con una hora absurda per
 el RTC está bien, copia el hardware al sistema.
 
 ```bash
+# Copiando la hora del reloj de hardware al sistema
 sudo hwclock --hctosys
 ```
 
@@ -174,5 +175,6 @@ El RTC debe guardarse en UTC, que es lo que espera Linux, y solo se pone en hora
 local cuando la máquina arranca también Windows.
 
 ```bash
+# Guardando el reloj de hardware en UTC
 sudo timedatectl set-local-rtc 0
 ```

@@ -4,6 +4,8 @@ draft: true
 tags:
   - matematicas
   - algebra-lineal
+created: 2026-09-08
+modified: 2026-09-08
 ---
 
 Un grupo es un par ordenado $(G, \odot)$, compuesto por un conjunto $G$ y una operación

@@ -4,6 +4,8 @@ draft: true
 tags:
   - matematicas
   - algebra-lineal
+created: 2026-09-08
+modified: 2026-09-08
 ---
 
 Un espacio vectorial, es una cuaterna $V = (\mathbb{V}, +, K, \cdot )$ donde:
